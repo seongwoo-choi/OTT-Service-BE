@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ott-app
+    role: production
+    tags.datadoghq.com/env: "prod"
+    tags.datadoghq.com/service: "ott-app"
+    tags.datadoghq.com/version: "1.0.0"
+  name: production-ott-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      role: production
+  template:
+    metadata:
+      labels:
+        role: production
+        tags.datadoghq.com/env: "prod"
+        tags.datadoghq.com/service: "ott-app"
+        tags.datadoghq.com/version: "1.0.0"
+    spec:
+      affinity: 
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - production
+      containers:
+        - name: ott-app
+          image: how0326/ott_service:17
+          envFrom:
+            - secretRef:
+                name: secret-configs  # kubectl create secret generic secret-configs --from-file=secret-configs
+            - configMapRef:
+                name: configs         # kubectl create configmap configs --from-file=configs
+          env:
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_LOGS_INJECTION
+              value: "true"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - ls
+                - /app/app.js
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 10
+

@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ott-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/actions.redirect-to-https: >
+      {"Type":"redirect","RedirectConfig":{"Port":"443","Protocol":"HTTPS","StatusCode":"HTTP_302"}}
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:007442965030:certificate/4338ce35-a437-4f21-bd9b-d41cfdc46346
+spec:
+  defaultBackend:
+    service:
+      name: production-svc-lb
+      port:
+        number: 80
+  rules:
+    - http:
+        paths:
+          - path: /media
+            pathType: Prefix
+            backend:
+              service:
+                name: production-svc-lb
+                port:
+                  number: 80       
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: production-svc-lb
+                port:
+                  number: 80
+          - path: /lists
+            pathType: Prefix
+            backend:
+              service:
+                name: production-svc-lb
+                port:
+                  number: 80
+          - path: /movies
+            pathType: Prefix
+            backend:
+              service:
+                name: production-svc-lb
+                port:
+                  number: 80
+          - path: /signedUrl
+            pathType: Prefix
+            backend:
+              service:
+                name: production-svc-lb
+                port:
+                  number: 80
