@@ -19,38 +19,10 @@ spec:
   rules:
     - http:
         paths:
-          - path: /media
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: production-svc-lb
                 port:
-                  number: 80       
-          - path: /auth
-            pathType: Prefix
-            backend:
-              service:
-                name: production-svc-lb
-                port:
-                  number: 80
-          - path: /lists
-            pathType: Prefix
-            backend:
-              service:
-                name: production-svc-lb
-                port:
-                  number: 80
-          - path: /movies
-            pathType: Prefix
-            backend:
-              service:
-                name: production-svc-lb
-                port:
-                  number: 80
-          - path: /signedUrl
-            pathType: Prefix
-            backend:
-              service:
-                name: production-svc-lb
-                port:
-                  number: 80
+                  number: 80      
