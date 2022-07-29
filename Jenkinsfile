@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  tools {
-    maven 'Maven3' 
-  }
   
   environment {
     dockerHubRegistry = 'how0326/ott_service'
