@@ -32,7 +32,7 @@ spec:
                 - production
       containers:
         - name: ott-app
-          image: how0326/ott_service:17
+          image: how0326/ott_service:18
           envFrom:
             - secretRef:
                 name: secret-configs  # kubectl create secret generic secret-configs --from-file=secret-configs
@@ -65,10 +65,9 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 5
           readinessProbe:
-            exec:
-              command:
-                - ls
-                - /app/app.js
+            httpGet:
+              path: /health
+              port: 8080
             initialDelaySeconds: 20
             periodSeconds: 10
             successThreshold: 1
