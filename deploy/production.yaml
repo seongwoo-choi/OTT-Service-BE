@@ -13,6 +13,9 @@ spec:
   selector:
     matchLabels:
       role: production
+      tags.datadoghq.com/env: "prod"
+      tags.datadoghq.com/service: "ott-app"
+      tags.datadoghq.com/version: "1.0.0"
   template:
     metadata:
       labels:
