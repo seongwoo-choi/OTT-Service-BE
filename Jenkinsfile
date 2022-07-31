@@ -71,7 +71,7 @@ pipeline {
     stage('K8S Manifest Update') {
       steps {
         git credentialsId: githubCredential,
-            url: 'https://github.com/Infra-Project/OTT-Service-BE.git',
+            url: 'https://github.com/seongwoo-choi/OTT-Service-BE.git',
             branch: 'main'  
 
         sh "git config --global user.email ${gitEmail}"
