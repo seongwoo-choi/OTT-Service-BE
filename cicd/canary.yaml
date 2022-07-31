@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: canary-rollouts-ott
-        image: how0326/ott_service:16
+        image: how0326/ott_service:18
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
