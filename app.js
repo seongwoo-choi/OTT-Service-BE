@@ -1,4 +1,6 @@
-const tracer = require('dd-trace').init()
+const tracer = require('dd-trace').init({
+    appsec: true
+})
 const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
