@@ -29,6 +29,7 @@ pipeline {
     stage('Docker Image Build') {
       steps {
         sh "docker build . -t ${dockerHubRegistry}:${currentBuild.number}"
+        sh "docker build . -t ${dockerHubRegistry}:canary"
         sh "docker build . -t ${dockerHubRegistry}:latest"
       }
       post {
@@ -47,6 +48,7 @@ pipeline {
       steps {
         withDockerRegistry(credentialsId: dockerHubRegistryCredential, url: '') {
           sh "docker push ${dockerHubRegistry}:${currentBuild.number}"
+          sh "docker push ${dockerHubRegistry}:canary"
           sh "docker push ${dockerHubRegistry}:latest"
           
           sleep 10
@@ -56,12 +58,14 @@ pipeline {
         failure {
           echo 'Docker Image Push failure'
           sh "docker rmi ${dockerHubRegistry}:${currentBuild.number}"
+          sh "docker rmi ${dockerHubRegistry}:canary"
           sh "docker rmi ${dockerHubRegistry}:latest"
           //slackSend (color: '#FF0000', message: "FAILED: Docker Image Push '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
         success {
           echo 'Docker Image Push success'
           sh "docker rmi ${dockerHubRegistry}:${currentBuild.number}"
+          sh "docker rmi ${dockerHubRegistry}:canary"
           sh "docker rmi ${dockerHubRegistry}:latest"
           //slackSend (color: '#0AC9FF', message: "SUCCESS: Docker Image Push '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
@@ -77,9 +81,9 @@ pipeline {
         sh "git config --global user.email ${gitEmail}"
         sh "git config --global user.name ${gitName}"
         sh "sed -i 's/ott_service:.*/ott_service:${currentBuild.number}/g' deploy/production.yaml"
-        sh "sed -i 's/ott_service:.*/ott_service:${currentBuild.number}/g' cicd/canary.yaml"
+        sh "sed -i 's/ott_service:.*/ott_service:canary/g' cicd/canary.yaml"
         sh "git add ."
-        sh "git commit -m 'fix:${dockerHubRegistry} ${currentBuild.number} image versioning'"
+        sh "git commit -m 'fix:${dockerHubRegistry} ${currentBuild.number}, canary image versioning'"
         sh "git branch -M main"
         sh "git remote remove origin"
         sh "git remote add origin git@github.com:Infra-Project/OTT-Service-BE.git"
