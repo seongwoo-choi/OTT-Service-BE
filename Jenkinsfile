@@ -81,7 +81,7 @@ pipeline {
         sh "git config --global user.email ${gitEmail}"
         sh "git config --global user.name ${gitName}"
         sh "sed -i 's/ott_service:.*/ott_service:${currentBuild.number}/g' deploy/production.yaml"
-        sh "sed -i 's/ott_service:.*/ott_service:canary/g' cicd/canary.yaml"
+        sh "sed -i 's/ott_service:.*/ott_service:${currentBuild.number}/g' cicd/canary.yaml"
         sh "git add ."
         sh "git commit -m 'fix:${dockerHubRegistry} ${currentBuild.number}, canary image versioning'"
         sh "git branch -M main"
